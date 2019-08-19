@@ -18,7 +18,7 @@
 //! [substrate](https://github.com/paritytech/substrate) node via RPC.
 
 #![deny(missing_docs)]
-#![deny(warnings)]
+//#![deny(warnings)]
 
 use futures::future::{
     self,

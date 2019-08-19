@@ -32,7 +32,9 @@ use substrate_primitives::Pair;
 //    + MaybeSerializeDebug
 //    + From<<Self as System>::BlockNumber>;
 //}
+pub trait Litentry: System {
 
+}
 /// The Balances extension trait for the Client.
 //pub trait BalancesStore {
 //
@@ -85,7 +87,7 @@ use substrate_primitives::Pair;
 /// The Balances extension trait for the XtBuilder.
 pub trait LitentryCalls {
     /// Balances type.
-    // type Balances: Balances;
+    type Litentry: Litentry;
 
     /// Transfer some liquid free balance to another account.
     ///
@@ -95,19 +97,20 @@ pub trait LitentryCalls {
     /// of the transfer, the account will be reaped.
     fn register_identity(
         &mut self,
-    ) -> Box<dyn Future<Item = <Self::Balances as System>::Hash, Error = Error> + Send>;
+    ) -> Box<dyn Future<Item = <Self::Litentry as System>::Hash, Error = Error> + Send>;
 }
 
-impl<P> LitentryCalls for XtBuilder<P>
+impl<T: Litentry + 'static, P> LitentryCalls for XtBuilder<T, P>
     where
-        P: Pair,
-        P::Public: Into<<<T as System>::Lookup as StaticLookup>::Source>,
-        P::Signature: Codec,
+    P: Pair,
+    P::Public: Into<<<T as System>::Lookup as StaticLookup>::Source>,
+    P::Signature: Codec,
 {
 
+    type Litentry = T;
     fn register_identity(
         &mut self,
-    ) -> Box<dyn Future<Item = <Self::Balances as System>::Hash, Error = Error> + Send>
+    ) -> Box<dyn Future<Item = <Self::Litentry as System>::Hash, Error = Error> + Send>
     {
         let transfer_call = || {
             Ok(self
