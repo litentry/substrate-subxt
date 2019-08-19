@@ -3,3 +3,4 @@
 pub mod balances;
 pub mod contracts;
 pub mod system;
+pub mod litentry;
